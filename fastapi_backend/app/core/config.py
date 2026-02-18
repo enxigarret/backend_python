@@ -38,7 +38,7 @@ class Settings(BaseSettings):
         ]
 
     #PROJECT_NAME: str
-    #SENTRY_DSN: HttpUrl | None = None
+    SENTRY_DSN: HttpUrl | None = None
     #POSTGRES_SERVER: str
     ##POSTGRES_USER: str
    # POSTGRES_PASSWORD: str = ""

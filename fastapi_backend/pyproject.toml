@@ -9,6 +9,7 @@ dependencies = [
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.0",
     "sentry-sdk>=2.53.0",
+    "sqlmodel>=0.0.34",
     "starlette>=0.52.1",
     "uvicorn>=0.41.0",
 ]

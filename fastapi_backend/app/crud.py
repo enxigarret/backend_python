@@ -2,7 +2,7 @@ import uuid
 from typing import Any
 
 from sqlmodel import SQLModel, Session, select
-from app.models import User, Item
+# from app.models import User, Item
 
 def create_user(*,session: Session,user_create:UserCreate) -> User:
     db_user_obj = User.model_validate(

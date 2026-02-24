@@ -1,8 +1,18 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import AnyUrl, HttpUrl, computed_field, BeforeValidator
+# from pydantic import AnyUrl, HttpUrl, computed_field, BeforeValidator
 
 import secrets
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Any
+
+from pydantic import (
+    AnyUrl,
+    BeforeValidator,
+    EmailStr,
+    HttpUrl,
+    PostgresDsn,
+    computed_field,
+    model_validator,
+)
 
 
 def parse_cors(v: Any) -> list[str] | str:
@@ -45,7 +55,7 @@ class Settings(BaseSettings):
     
    # POSTGRES_DB: str = ""
     DEBUG: bool = False
-    
+
     # for email settings
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False

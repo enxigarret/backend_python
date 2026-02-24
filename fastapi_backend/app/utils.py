@@ -5,6 +5,23 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)    
+from pathlib import Path
+from jinja2 import Template
+from typing import Any
+
+
+@dataclass
+class EmailData:
+    html_content: str
+    subject: str
+
+
+def render_email_template(*, template_name: str, context: dict[str, Any]) -> str:
+    template_str = (
+        Path(__file__).parent / "email-templates" / "build" / template_name
+    ).read_text()
+    html_content = Template(template_str).render(context)
+    return html_content
 
 def send_email(*, email_to: str, subject: str, html_content: str) -> None:
     """
@@ -35,15 +52,9 @@ def generate_new_account_email(*, email_to: str, username: str, password: str) -
     """
     Generate email for account creation.
     """
-    subject = "Your new account has been created"
-    html_content = f"""
-    <p>Hi {username},</p>
-    <p>Your new account has been created successfully. Here are your login details:</p>
-    <ul>
-        <li><strong>Email:</strong> {email_to}</li>
-        <li><strong>Password:</strong> {password}</li>
-    </ul>
-    <p>Please keep this information secure and do not share it with anyone.</p>
-    <p>Best regards,<br>Your Company Team</p>
-    """
+    subject = f"Your new account has been created, for new account with username: {username}"
+    html_content = render_email_template(
+        template_name="new_account.html",
+        context={"username": username, "password": password,"email_to": email_to},
+    )
     return emails.Message(subject=subject, html=html_content)

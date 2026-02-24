@@ -2,12 +2,14 @@ import uuid
 from typing import Any
 
 from sqlmodel import SQLModel, Session, select
-# from app.models import User, Item
+from app.models import User,UserCreate, UserUpdate
+
+from app.core.security import get_password_hash, verify_password
 
 def create_user(*,session: Session,user_create:UserCreate) -> User:
     db_user_obj = User.model_validate(
         user_create, 
-        update ={"hashed_password":  get_password_hash_create.password }
+        update ={"hashed_password":  get_password_hash(user_create.password )}
     )
   
     session.add(db_user_obj)
@@ -17,12 +19,14 @@ def create_user(*,session: Session,user_create:UserCreate) -> User:
 
 def updatate_user(*,session: Session, db_user: User, user_update: UserUpdate) -> Any:
     user_data = user_update.model_dump(exclude_unset=True)
-    update_data = user_update.model_dump(exclude_unset=True)
+
+    extra_data = {}
     if "passward" in user_data:
         password = user_data["password"]
         hashed_password = get_password_hash(password)
+        extra_data["hashed_password"] = hashed_password
         
-    db_user.sqlmodel_update(update_data, update=extra_data)
+    db_user.sqlmodel_update(user_data, update=extra_data)
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
@@ -43,7 +47,7 @@ def authenticate(*, session: Session, email: str, password: str) -> User | None:
         # Perform a dummy hash verification to mitigate timing attacks
         verify_password(password, DUMMY_HASH)
         return None
-    verified, updatate_password_hash= verifiy_password(password, db_user.hashed_password)
+    verified, updatate_password_hash= verify_password(password, db_user.hashed_password)
     if not verified:
         return None
     if updatate_password_hash:

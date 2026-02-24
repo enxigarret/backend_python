@@ -2,6 +2,8 @@ from sqlmodel import Field, Relationship, SQLModel
 from pydantic import EmailStr
 from sqlmodel import Field, SQLModel
 from sqlalchemy import DateTime 
+
+from datetime import datetime
 import uuid
 
 
@@ -19,6 +21,10 @@ class UserBase(SQLModel):
 
 class UserCreate(UserBase):
     password: str = Field(min_length=8, max_length=128)
+
+class UserUpdate(SQLModel):
+    password: str | None = Field(default=None, min_length=8, max_length=128)
+    email:EmailStr | None = Field(unique=True, index=True,max_length=255)
 
 class User(UserBase, table=True):
     id: uuid.UUID  = Field( default_factory=uuid.uuid4, primary_key=True)

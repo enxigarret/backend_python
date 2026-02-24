@@ -1,4 +1,18 @@
-def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
+
+import uuid
+from typing import Any
+from fatapi import APIRouter, HTTPException
+from app.core.config import settings
+from sqlmodel import col ,delete, select
+
+from app import crud
+
+from  app.api.deps import SessionDep
+from app.models import UserCreate, UserRead, UserRegister
+
+from app.utils import generate_new_account_email, send_email
+
+def create_user_route(*, session: SessionDep, user_in: UserCreate) -> Any:
     """
     Create new user.
     """

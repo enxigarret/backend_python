@@ -1,4 +1,4 @@
-def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
+def create_user_route(*, session: SessionDep, user_in: UserCreate) -> Any:
     """
     Create new user.
     """

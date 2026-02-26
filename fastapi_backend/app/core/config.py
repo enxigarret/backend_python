@@ -49,7 +49,7 @@ class Settings(BaseSettings):
     
  
     SENTRY_DSN: HttpUrl | None = None
-    POSTGRES_SERVER: str
+    POSTGRES_SERVER: str = "localhost"
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str = "postgres_user"
     POSTGRES_PASSWORD: str = "123"
@@ -89,8 +89,8 @@ class Settings(BaseSettings):
 
     #supser user
     EMAIL_TEST_USER: EmailStr = "test@example.com"
-    FIRST_SUPERUSER: EmailStr
-    FIRST_SUPERUSER_PASSWORD: str
+    FIRST_SUPERUSER: EmailStr = "test@example.com"
+    FIRST_SUPERUSER_PASSWORD: str = "123"
 
 settings = Settings()
 

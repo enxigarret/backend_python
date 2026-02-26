@@ -51,9 +51,9 @@ class Settings(BaseSettings):
     SENTRY_DSN: HttpUrl | None = None
     POSTGRES_SERVER: str
     POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str = ""
-    POSTGRES_DB: str = ""
+    POSTGRES_USER: str = "postgres_user"
+    POSTGRES_PASSWORD: str = "123"
+    POSTGRES_DB: str = "fastapi_backend_app"
     
     @computed_field  # type: ignore[prop-decorator]
     @property

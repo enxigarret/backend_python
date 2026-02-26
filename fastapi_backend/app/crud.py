@@ -21,7 +21,7 @@ def updatate_user(*,session: Session, db_user: User, user_update: UserUpdate) ->
     user_data = user_update.model_dump(exclude_unset=True)
 
     extra_data = {}
-    if "passward" in user_data:
+    if "password" in user_data:
         password = user_data["password"]
         hashed_password = get_password_hash(password)
         extra_data["hashed_password"] = hashed_password

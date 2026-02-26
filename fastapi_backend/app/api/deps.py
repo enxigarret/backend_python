@@ -6,7 +6,7 @@ from pydantic import ValidationError
 import jwt
 from jwt.exceptions import InvalidTokenError
 
-
+from app.core.db import engine
 
 from fastapi.security import OAuth2PasswordBearer
 from app.core.config import settings

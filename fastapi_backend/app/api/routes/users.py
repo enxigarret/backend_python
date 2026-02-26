@@ -8,7 +8,7 @@ from sqlmodel import col ,delete, select
 from app import crud
 
 from  app.api.deps import SessionDep
-from app.models import UserCreate, UserRead, UserRegister
+from app.models import UserCreate
 
 from app.utils import generate_new_account_email, send_email
 

@@ -4,7 +4,8 @@ from typing import Annotated
 from collections.abc import Generator
 from pydantic import ValidationError
 import jwt
-from jwt.exceptions import JWTError
+from jwt.exceptions import InvalidTokenError
+
 
 
 from fastapi.security import OAuth2PasswordBearer
@@ -18,6 +19,7 @@ from app.models import TokenPayload
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"
 )
+
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -36,7 +38,7 @@ def get_current_user(session:SessionDep,token:TokenDep) -> User:
             algorithms=[ALGORITHM]
             )
         token_data = TokenPayload.model_validate(payload)
-    except (JWTError, ValidationError):
+    except (InvalidTokenError, ValidationError):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Could not validate credentials",

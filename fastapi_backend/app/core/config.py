@@ -50,7 +50,7 @@ class Settings(BaseSettings):
  
     SENTRY_DSN: HttpUrl | None = None
     POSTGRES_SERVER: str = "localhost"
-    POSTGRES_PORT: int = 5432
+    POSTGRES_PORT: int = 5434
     POSTGRES_USER: str = "postgres_user"
     POSTGRES_PASSWORD: str = "123"
     POSTGRES_DB: str = "fastapi_backend_app"

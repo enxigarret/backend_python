@@ -5,6 +5,7 @@ from collections.abc import Generator
 from pydantic import ValidationError
 import jwt
 from jwt.exceptions import InvalidTokenError
+import logging
 
 from app.core.db import engine
 
@@ -56,10 +57,18 @@ def get_current_user(session:SessionDep,token:TokenDep) -> User:
             detail="Inactive user"
         )
     return user
-
+logger = logging.getLogger(__name__)
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 def get_current_active_superuser(current_user: CurrentUser) -> User:
+
+    logger.info(
+        "Superuser check: id=%s email=%s is_superuser=%s",
+        current_user.id,
+        current_user.email,
+        current_user.is_superuser,
+    )
+    
     if not current_user.is_superuser:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

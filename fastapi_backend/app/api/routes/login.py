@@ -3,13 +3,14 @@ from fastapi import APIRouter
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
-from typing import Annotated
+from typing import Annotated, Any
 from app import crud
 from app.core import security
 
 from app.core.config import settings    
-from app.api.deps import SessionDep
-from app.models import Token
+from app.api.deps import SessionDep, CurrentUser
+from app.models import Token, UserPublic
+import logging
 
 
 router = APIRouter(tags=["login"])
@@ -21,6 +22,7 @@ def login_access_token(
     """
     OAuth2 compatible token login, get an access token for future requests
     """
+    logging.info(f"Login attempt for email: {form_data.username}")
     user = crud.authenticate(
         session=session, email=form_data.username, password=form_data.password
     )
@@ -36,3 +38,10 @@ def login_access_token(
         access_token = security.create_access_token(user.id,expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         )
     )
+
+@router.post("/login/test-token", response_model=UserPublic)
+def test_token(current_user: CurrentUser) -> Any:
+    """
+    Test access token
+    """
+    return current_user

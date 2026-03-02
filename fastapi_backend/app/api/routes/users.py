@@ -36,7 +36,8 @@ def read_users(
 
 @router.post(
     "/", 
-    dependencies=[Depends(get_current_active_superuser)],
+     dependencies=[Depends(get_current_active_superuser)],
+   
     response_model=UserPublic, 
     status_code=201)
 

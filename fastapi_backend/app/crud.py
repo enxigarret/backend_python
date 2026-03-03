@@ -19,7 +19,7 @@ def create_user(*,session: Session,user_create:UserCreate) -> User:
 
 def updatate_user(*,session: Session, db_user: User, user_update: UserUpdate) -> Any:
     user_data = user_update.model_dump(exclude_unset=True)
-
+    #here only password is handled as a special case, if there are other fields that need special handling, they can be added here
     extra_data = {}
     if "password" in user_data:
         password = user_data["password"]
@@ -56,3 +56,5 @@ def authenticate(*, session: Session, email: str, password: str) -> User | None:
         session.commit()
         session.refresh(db_user)
     return db_user
+
+

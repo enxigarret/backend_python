@@ -9,6 +9,8 @@ logger = logging.getLogger(__name__)
 from pathlib import Path
 from jinja2 import Template
 from typing import Any
+import jwt
+import app.core.security as security
 
 
 @dataclass
@@ -59,3 +61,22 @@ def generate_new_account_email(*, email_to: str, username: str, password: str) -
         context={"username": username, "password": password,"email_to": email_to},
     )
     return emails.Message(subject=subject, html=html_content)
+
+def verify_password_reset_token(*, token: str) -> str:
+    """
+    Verify password reset token and return email if valid.
+    """
+    # Implement your token verification logic here
+    # For example, decode the token and extract the email
+    # If the token is invalid or expired, raise an appropriate exception
+    try:
+        decoded_token = jwt.decode(
+        token,
+        settings.SECRET_KEY, 
+        algorithms=[security.ALGORITHM]
+    )
+        return str(decoded_token.get("sub"))
+
+    except:
+        NotImplementedError("Password reset token verification is not implemented yet.")
+        return None

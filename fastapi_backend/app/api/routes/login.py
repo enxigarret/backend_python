@@ -9,8 +9,9 @@ from app.core import security
 
 from app.core.config import settings    
 from app.api.deps import SessionDep, CurrentUser
-from app.models import Token, UserPublic
+from app.models import Token, UserPublic, NewPassword
 import logging
+from  app.utils import verify_password_reset_token
 
 
 router = APIRouter(tags=["login"])
@@ -45,3 +46,11 @@ def test_token(current_user: CurrentUser) -> Any:
     Test access token
     """
     return current_user
+
+@router.post("/login/password-reset")
+def reset_password(session:SessionDep, body:NewPassword) -> Any:
+    """
+    Password reset
+    """
+    email = verify_password_reset_token(token = body.token)
+    return {"msg": "Password reset functionality is not implemented yet."}

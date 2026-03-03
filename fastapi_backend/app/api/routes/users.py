@@ -8,7 +8,7 @@ from sqlmodel import col ,delete, select,func
 from app import crud
 
 from  app.api.deps import SessionDep, get_current_active_superuser
-from app.models import UserCreate, User, UserPublic , UserRegister
+from app.models import UserCreate, User, UserPublic , UserRegister,UserInDB
 
 from app.utils import generate_new_account_email, send_email
 
@@ -17,7 +17,7 @@ router = APIRouter(tags=["users"])
 @router.get(
         "/",
         dependencies=[Depends(get_current_active_superuser)], 
-        response_model=list[UserPublic])
+        response_model=UserInDB)
 
 def read_users(
     *,
@@ -29,9 +29,10 @@ def read_users(
     Retrieve users.
     """
     statement = select(User).offset(skip).limit(limit)
-    count = session.exec(select([col(func.count())]).select_from(User)).scalar_one()
+    count_stmt = select(func.count()).select_from(User)
+    count = session.exec(count_stmt).one()
     users = session.exec(statement).all()
-    return UserPublic(data=users,cout=count)
+    return UserInDB(data=users,count=count)
 
 
 @router.post(
@@ -77,7 +78,7 @@ def register_user(session:SessionDep,user_in:UserRegister)->Any:
             status_code=400,
             detail="The user with this email already exists in the system.",
         )
-    user_create = UserCreate.model_calidate(user_in )
+    user_create = UserCreate.model_validate(user_in )
     user = crud.create_user(session=session, user_create=user_create)
     return user
 
@@ -99,3 +100,6 @@ def register_user(session:SessionDep,user_in:UserRegister)->Any:
 #     user_create = UserCreate.model_calidate(user_in )
 #     user = crud.create_user(session=session, user_create=user_create)
 #     return user
+
+
+# @router.patch("/{id}", response_model=UserPublic, dependencies=[Depends(get_current_active_superuser)]) 

@@ -34,11 +34,16 @@ class User(UserBase, table=True):
 class UserPublic(UserBase):
     id: uuid.UUID
     created_at: datetime | None = None
+
+class UserInDB(SQLModel):
+    data:list[UserPublic]
+    count:int
     
 class UserRegister(SQLModel):
     email: EmailStr = Field(unique=True, index=True,max_length=255)
     password: str = Field(min_length=8, max_length=128)
     full_name: str | None = Field(default=None, max_length=255)
+
 
     # JSON payload containing access token
 class Token(SQLModel):

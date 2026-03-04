@@ -7,7 +7,7 @@ from sqlmodel import col ,delete, select,func
 
 from app import crud
 
-from  app.api.deps import SessionDep, get_current_active_superuser
+from  app.api.deps import SessionDep, get_current_active_superuser,get_current_user
 from app.models import UserCreate, User, UserPublic , UserRegister,UserInDB,UserUpdate
 
 from app.utils import generate_new_account_email, send_email
@@ -81,6 +81,16 @@ def register_user(session:SessionDep,user_in:UserRegister)->Any:
     user_create = UserCreate.model_validate(user_in )
     user = crud.create_user(session=session, user_create=user_create)
     return user
+
+
+@router.get("/me", response_model=UserPublic)
+def read_user_me(
+    current_user: User = Depends(get_current_user),
+) -> Any:
+    """
+    Get current user.
+    """
+    return current_user
 
 # @router.post("/signup", response_model=UserRead, status_code=201) 
 # def  register_user(

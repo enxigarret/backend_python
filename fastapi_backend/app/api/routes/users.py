@@ -101,6 +101,23 @@ def register_user(session:SessionDep,user_in:UserRegister)->Any:
 #     user = crud.create_user(session=session, user_create=user_create)
 #     return user
 
+@router.get(
+        "/{user_id}", 
+        response_model=UserPublic, 
+        dependencies=[Depends(get_current_active_superuser)])
+def get_user(
+    *,
+    session: SessionDep,
+    user_id: uuid.UUID
+) -> Any:
+    """
+    Get user by ID.
+    """
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 
 @router.patch(
     "/{id}", 

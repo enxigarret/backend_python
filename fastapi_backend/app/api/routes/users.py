@@ -8,7 +8,7 @@ from sqlmodel import col ,delete, select,func
 from app import crud
 
 from  app.api.deps import SessionDep, get_current_active_superuser
-from app.models import UserCreate, User, UserPublic , UserRegister,UserInDB
+from app.models import UserCreate, User, UserPublic , UserRegister,UserInDB,UserUpdate
 
 from app.utils import generate_new_account_email, send_email
 
@@ -102,4 +102,27 @@ def register_user(session:SessionDep,user_in:UserRegister)->Any:
 #     return user
 
 
-# @router.patch("/{id}", response_model=UserPublic, dependencies=[Depends(get_current_active_superuser)]) 
+@router.patch(
+    "/{id}", 
+    response_model=UserPublic, 
+    dependencies=[Depends(get_current_active_superuser)])
+def update_user(
+    *,
+    session: SessionDep,
+    user_id: uuid.UUID,
+    user_in:UserUpdate)-> Any:
+    db_user = session.get(User, user_id)
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user_in.email and user_in.email != db_user.email:
+        existing_user = crud.get_user_by_email(session=session, email=user_in.email)
+        if existing_user and existing_user.id != user_id:   
+            raise HTTPException(
+                status_code=400,
+                detail="The user with this email already exists in the system.",
+            )
+    user_data = crud.update_user(session=session, db_user=db_user, user_update=user_in)
+    return user_data
+
+
+    

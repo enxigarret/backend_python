@@ -89,6 +89,7 @@ class Settings(BaseSettings):
 
     #supser user
     EMAIL_TEST_USER: EmailStr = "test@example.com"
+    EMAIL_TEST_USER_PASSWORD: str = "123"
     FIRST_SUPERUSER: EmailStr = "test@example.com"
     FIRST_SUPERUSER_PASSWORD: str = "123"
 

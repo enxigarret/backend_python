@@ -34,6 +34,11 @@ class User(UserBase, table=True):
 class UserPublic(UserBase):
     id: uuid.UUID
     created_at: datetime | None = None
+    
+class UserUpdateMe(SQLModel):
+    full_name: str | None = Field(default=None, max_length=255)
+    email: EmailStr|None = Field(unique=True, index=True,max_length=255)
+  
 
 class UserInDB(SQLModel):
     data:list[UserPublic]

@@ -7,7 +7,7 @@ from sqlmodel import col ,delete, select,func
 
 from app import crud
 
-from  app.api.deps import SessionDep, get_current_active_superuser,get_current_user
+from  app.api.deps import SessionDep, get_current_active_superuser,get_current_user,CurrentUser
 from app.models import UserCreate, User, UserPublic , UserRegister,UserInDB,UserUpdate
 
 from app.utils import generate_new_account_email, send_email
@@ -91,6 +91,28 @@ def read_user_me(
     Get current user.
     """
     return current_user
+
+@router.patch("/me",response_model=UserPublic)
+def update_user_me(
+    *,
+    session:SessionDep,
+    user_in:UserUpdateMe,
+    current_user: CurrentUser
+) ->Any:
+    if user_in.email:
+        existing_user = crud.get_user_by_email(session=session,email=user_in.email)
+        if existing_user and existing_user.id != current_user.id:
+            raise HTTPException(
+                status_code=409, detail="User with this email already exists"
+            )
+    user_data= user_in.model_dump(exclude_unset=True)
+    current_user.sqlmodel_update(user_data)
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+    return current_user
+
+
 
 # @router.post("/signup", response_model=UserRead, status_code=201) 
 # def  register_user(

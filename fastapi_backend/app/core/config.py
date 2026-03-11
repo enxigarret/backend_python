@@ -86,6 +86,7 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str | None = None
     EMAILS_FROM_EMAIL: EmailStr | None = None
     EMAILS_FROM_NAME: str | None = None
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 1
 
     #supser user
     EMAIL_TEST_USER: EmailStr = "admin3@admin.com"

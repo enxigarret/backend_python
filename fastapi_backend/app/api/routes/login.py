@@ -11,7 +11,7 @@ from app.core.config import settings
 from app.api.deps import SessionDep, CurrentUser
 from app.models import Token, UserPublic, NewPassword, UserUpdate, Message
 import logging
-from  app.utils import verify_password_reset_token
+from  app.utils import send_email, verify_password_reset_token
 
 
 router = APIRouter(tags=["login"])
@@ -65,3 +65,22 @@ def reset_password(session:SessionDep, body:NewPassword) -> Any:
     crud.update_user(session=session, db_user=user, user_in=user_in_update)
     return Message(message="Password reset successful")
 
+@router.post("/password-recovery/{email}")
+def recover_password(session:SessionDep, email:str) -> Message:
+    """
+    Password recovery
+    """
+    user = crud.get_user_by_email(session=session, email=email)
+    if user and user.is_active:
+        password_reset_token = security.generate_password_reset_token(email=email)
+
+        # send email with password reset token
+        email_data = security.generate_password_reset_email(
+            email_to=email, token=password_reset_token, email=email
+        )
+        send_email(
+            email_to=email,
+            subject=email_data.subject,
+            html_content=email_data.html_content,
+        )
+    return Message(message="Password recovery email sent")

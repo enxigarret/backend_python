@@ -11,6 +11,7 @@ from jinja2 import Template
 from typing import Any
 import jwt
 import app.core.security as security
+from datatime import timedelta, timezone, datetime
 
 
 @dataclass
@@ -62,7 +63,7 @@ def generate_new_account_email(*, email_to: str, username: str, password: str) -
     )
     return emails.Message(subject=subject, html=html_content)
 
-def verify_password_reset_token(*, token: str) -> str:
+def verify_password_reset_token(*, token: str) -> str:  
     """
     Verify password reset token and return email if valid.
     """
@@ -80,3 +81,25 @@ def verify_password_reset_token(*, token: str) -> str:
     except:
         NotImplementedError("Password reset token verification is not implemented yet.")
         return None
+    
+def generate_password_reset_token(email:str) -> str:
+    """
+    Generate a password reset token for the given email.
+    """
+    # Implement your token generation logic here
+    # For example, create a JWT token with the email as the subject and an expiration time
+    delta= timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)  # Token valid for 1 hour
+    now = datetime.now(timezone=timezone.utc)
+    expires = now+delta
+    exp = expires.timestamp()
+    try:
+        token = jwt.encode(
+            {"exp": exp, "nbf": now, "sub": email},    
+            settings.SECRET_KEY,
+            algorithm=security.ALGORITHM
+        )
+        return token
+    except:
+        NotImplementedError("Password reset token generation is not implemented yet.")
+        return None
+

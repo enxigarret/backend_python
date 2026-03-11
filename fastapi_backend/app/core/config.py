@@ -88,10 +88,10 @@ class Settings(BaseSettings):
     EMAILS_FROM_NAME: str | None = None
 
     #supser user
-    EMAIL_TEST_USER: EmailStr = "test@example.com"
-    EMAIL_TEST_USER_PASSWORD: str = "123"
-    FIRST_SUPERUSER: EmailStr = "test@example.com"
-    FIRST_SUPERUSER_PASSWORD: str = "123"
+    EMAIL_TEST_USER: EmailStr = "admin3@admin.com"
+    EMAIL_TEST_USER_PASSWORD: str = "adminpassword"
+    FIRST_SUPERUSER: EmailStr = "admin1@admin.com"
+    FIRST_SUPERUSER_PASSWORD: str = "adminpassword"
 
 settings = Settings()
 

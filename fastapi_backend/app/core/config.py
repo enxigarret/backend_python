@@ -68,7 +68,7 @@ class Settings(BaseSettings):
         )
     #This constructs a full PostgreSQL connection string using: SQLAlchemy connection format
 
-    #PROJECT_NAME: str
+    PROJECT_NAME: str = "FastAPI Backend"
     SENTRY_DSN: HttpUrl | None = None
     #POSTGRES_SERVER: str
     ##POSTGRES_USER: str

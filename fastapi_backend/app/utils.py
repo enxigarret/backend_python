@@ -103,3 +103,21 @@ def generate_password_reset_token(email:str) -> str:
         NotImplementedError("Password reset token generation is not implemented yet.")
         return None
 
+def generate_password_reset_email(*, email_to: str, email:str,token: str) -> EmailData:
+    """
+    Generate email for password reset.
+    """
+    project_name = settings.PROJECT_NAME
+    subject = f"{project_name} - Password Reset Request for user {email}"
+    link = f"{settings.FRONTEND_HOST}/reset-password?token={token}"
+    html_content = render_email_template(
+        template_name="password_reset.html",
+        context={
+            "email_to": email_to,
+            "project_name": project_name,
+            "user_email": email,
+            "valid_hours": settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS,
+            "link": link
+            },
+    )
+    return EmailData(subject=subject, html_content=html_content)

@@ -80,7 +80,7 @@ def recover_password(session:SessionDep, email:str) -> Message:
             email_to=email, token=password_reset_token, email=email
         )
         send_email(
-            email_to=email,
+            email_to=email,           
             subject=email_data.subject,
             html_content=email_data.html_content,
         )

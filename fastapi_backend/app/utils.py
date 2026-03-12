@@ -11,7 +11,7 @@ from jinja2 import Template
 from typing import Any
 import jwt
 import app.core.security as security
-from datatime import timedelta, timezone, datetime
+from datetime import timedelta, timezone, datetime
 
 
 @dataclass
@@ -36,8 +36,8 @@ def send_email(*, email_to: str, subject: str, html_content: str) -> None:
     message = emails.Message(
         subject=subject,
         html=html_content,
-        mail_from=(settings.EMAILS_FROM_NAME, settings.EMAILS_FROM_EMAIL),
-    )
+        mail_from=((settings.EMAILS_FROM_NAME, settings.EMAILS_FROM_EMAIL),
+    ))
     smtp_options = {"host": settings.EMAILS_SMTP_HOST, "port": settings.EMAILS_SMTP_PORT}
     if settings.EMAILS_SMTP_TLS:
         smtp_options["tls"] = True

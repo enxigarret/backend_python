@@ -32,3 +32,20 @@ def authentication_token_from_email(
             raise Exception("User id not set")
         user = crud.update_user(session=db, db_user=user, user_in=user_in_update)
     return user_authentication_header(client=client, email=email, password=password)
+
+def authentication_token_from_email(
+        *,
+        client: TestClient, 
+        email: str, 
+        db:Session) -> dict[str, str]:
+    # send password recovery email to get the token
+    password = "testpassword123" 
+    user = crud.get_user_by_email(session=db, email=email)
+    if not user:
+        raise Exception(f"User with email {email} not found in the database")
+    else:
+        user_in_update = UserUpdate(password=password)
+        crud.update_user(session=db, db_user=user, user_in=user_in_update)
+
+    return user_authentication_header(client=client, email=email, password=password)
+   

@@ -84,9 +84,13 @@ class Settings(BaseSettings):
     SMTP_HOST: str | None = None
     SMTP_USER: str | None = None
     SMTP_PASSWORD: str | None = None
-    EMAILS_FROM_EMAIL: EmailStr | None = None
+    EMAILS_FROM_EMAIL: EmailStr | None = "fastapi_backend_admin@admin.com"
     EMAILS_FROM_NAME: str | None = None
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 1
+    EMAILS_ENABLED: bool = True
+    EMAILS_SMTP_USER: str | None = None
+    EMAILS_SMTP_PASSWORD: str | None = None
+
 
     #supser user
     EMAIL_TEST_USER: EmailStr = "admin3@admin.com"

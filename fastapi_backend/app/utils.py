@@ -32,7 +32,7 @@ def send_email(*, email_to: str, subject: str, html_content: str) -> None:
     Send an email.
     """
     # Implement your email sending logic here using your preferred email library
-    assert settings.emails_enabled, "Emails are not enabled. Set settings.emails_enabled to True to enable email sending."
+    assert settings.EMAILS_ENABLED, "Emails are not enabled. Set settings.emails_enabled to True to enable email sending."
     message = emails.Message(
         subject=subject,
         html=html_content,
@@ -47,8 +47,11 @@ def send_email(*, email_to: str, subject: str, html_content: str) -> None:
         smtp_options["user"] = settings.EMAILS_SMTP_USER
     if settings.EMAILS_SMTP_PASSWORD:
         smtp_options["password"] = settings.EMAILS_SMTP_PASSWORD
-    response = message.send(to=email_to, smtp=smtp_options)
-    logger.info(f"Sent email to {email_to}: {response}")
+    try:
+        response = message.send(to=email_to, smtp=smtp_options)
+        logger.info(f"Sent email to {email_to}: {response}")
+    except Exception as e:
+        logger.error(f"Error sending email to {email_to}: {e}")
 
 
 

@@ -5,6 +5,7 @@ from app.main import app
 from unittest.mock import patch
 
 
+
 def test_get_access_token(client: TestClient) -> None:
     for route in app.routes:
         print(route.path)

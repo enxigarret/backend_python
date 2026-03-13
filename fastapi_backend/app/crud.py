@@ -17,7 +17,7 @@ def create_user(*,session: Session,user_create:UserCreate) -> User:
     session.refresh(db_user_obj)
     return db_user_obj
 
-def updatate_user(*,session: Session, db_user: User, user_update: UserUpdate) -> Any:
+def update_user(*,session: Session, db_user: User, user_update: UserUpdate) -> Any:
     user_data = user_update.model_dump(exclude_unset=True)
     #here only password is handled as a special case, if there are other fields that need special handling, they can be added here
     extra_data = {}

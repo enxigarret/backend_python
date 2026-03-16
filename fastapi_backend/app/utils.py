@@ -22,7 +22,7 @@ class EmailData:
 
 def render_email_template(*, template_name: str, context: dict[str, Any]) -> str:
     template_str = (
-        Path(__file__).parent / "email-templates" / "build" / template_name
+        Path(__file__).parent / "email_templates" / "build" / template_name
     ).read_text()
     html_content = Template(template_str).render(context)
     return html_content
@@ -36,12 +36,12 @@ def send_email(*, email_to: str, subject: str, html_content: str) -> None:
     message = emails.Message(
         subject=subject,
         html=html_content,
-        mail_from=((settings.EMAILS_FROM_NAME, settings.EMAILS_FROM_EMAIL),
-    ))
-    smtp_options = {"host": settings.EMAILS_SMTP_HOST, "port": settings.EMAILS_SMTP_PORT}
-    if settings.EMAILS_SMTP_TLS:
+        mail_from=(settings.EMAILS_FROM_EMAIL),
+    )
+    smtp_options = {"host": settings.SMTP_HOST, "port": settings.SMTP_PORT}
+    if settings.SMTP_TLS:
         smtp_options["tls"] = True
-    elif settings.EMAILS_SMTP_SSL:
+    elif settings.SMTP_SSL:
         smtp_options["ssl"] = True
     if settings.EMAILS_SMTP_USER:
         smtp_options["user"] = settings.EMAILS_SMTP_USER
@@ -92,7 +92,7 @@ def generate_password_reset_token(email:str) -> str:
     # Implement your token generation logic here
     # For example, create a JWT token with the email as the subject and an expiration time
     delta= timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)  # Token valid for 1 hour
-    now = datetime.now(timezone=timezone.utc)
+    now = datetime.now(timezone.utc)
     expires = now+delta
     exp = expires.timestamp()
     try:
@@ -114,7 +114,7 @@ def generate_password_reset_email(*, email_to: str, email:str,token: str) -> Ema
     subject = f"{project_name} - Password Reset Request for user {email}"
     link = f"{settings.FRONTEND_HOST}/reset-password?token={token}"
     html_content = render_email_template(
-        template_name="password_reset.html",
+        template_name="reset_password.html",
         context={
             "email_to": email_to,
             "project_name": project_name,

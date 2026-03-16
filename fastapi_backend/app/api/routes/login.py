@@ -14,6 +14,7 @@ import logging
 from  app.utils import send_email, verify_password_reset_token,generate_password_reset_token, generate_password_reset_email
 
 
+logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["login"])
 
@@ -72,7 +73,9 @@ def recover_password(session:SessionDep, email:str) -> Message:
     Password recovery
     """
     user = crud.get_user_by_email(session=session, email=email)
-    if user and user.is_active:
+    if not user or not user.is_active:
+        return Message(message="If an account not exists for that email, a password recovery email has been sent.")
+    try:
         password_reset_token = generate_password_reset_token(email=email)
 
         # send email with password reset token
@@ -84,4 +87,8 @@ def recover_password(session:SessionDep, email:str) -> Message:
             subject=email_data.subject,
             html_content=email_data.html_content,
         )
-    return Message(message="Password recovery email sent")
+    except Exception as e:
+        logger.exception(f"Error sending password recovery email to {email}: {e}")
+        # do not reveal that the email does not exist or email sending failed
+        
+    return Message(message="If an account exists for that email, a password recovery email has been sent.")

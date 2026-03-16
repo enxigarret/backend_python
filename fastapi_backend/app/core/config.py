@@ -78,10 +78,10 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # for email settings
-    SMTP_TLS: bool = True
+    SMTP_TLS: bool = False
     SMTP_SSL: bool = False
-    SMTP_PORT: int = 587
-    SMTP_HOST: str | None = None
+    SMTP_PORT: int = 1025#587
+    SMTP_HOST: str | None = "localhost"
     SMTP_USER: str | None = None
     SMTP_PASSWORD: str | None = None
     EMAILS_FROM_EMAIL: EmailStr | None = "fastapi_backend_admin@admin.com"

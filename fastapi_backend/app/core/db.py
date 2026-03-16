@@ -9,6 +9,7 @@ engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI), echo=True)
 #.first() means: “give me the first row from this query result, or None if there are no rows.”
 def init_db(session:Session) -> None:
     user = session.exec(select(User).where(User.email == settings.FIRST_SUPERUSER)).first()
+    # WHERE user.email = :first_superuser.
 
     if not user:
         user_in = UserCreate(

@@ -5,7 +5,7 @@ import App from './App.tsx'
 import { createBrowserRouter } from "@tanstack/router"
 import { ThemeProvider } from './components/theme-provider'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
-
+import { routeTree } from './routeTree.gen'
 
 const router = createRouter({routeTree})
 declare module Register {

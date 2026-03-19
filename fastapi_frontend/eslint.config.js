@@ -9,6 +9,7 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
+    
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
@@ -20,4 +21,10 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+  files: ["src/routes/**/*.tsx"],
+  rules: {
+    "react-refresh/only-export-components": "off"
+  }
+}
 ])

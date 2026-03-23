@@ -67,3 +67,31 @@ class NewPassword(SQLModel):
 
 class Message(SQLModel):
     message: str
+
+
+#items  
+class ItemBase(SQLModel):
+    title: str = Field (max_length=255,min_length=1)
+    description: str | None = Field(default=None, max_length=225)
+
+class ItemCreate(ItemBase):
+    pass
+
+class ItemUpdate(SQLModel):
+    title: str | None = Field(default=None, max_length=255, min_length=1)
+
+class Item(ItemBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    owner_id: uuid.UUID = Field(foreign_key="user.id", nullable=False,ondelete="CASCADE")
+    created_at: datetime | None = Field(default_factory=get_datetime_utc,sa_type=DateTime(timezone=True))
+    owner: User |None = Relationship(back_populates="items")
+
+
+class ItemPublic(ItemBase):
+    id: uuid.UUID
+    owner_id: uuid.UUID
+    created_at: datetime | None = None
+
+class ItemsPublic(SQLModel):
+    data:list[ItemPublic]
+    count:int

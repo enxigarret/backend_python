@@ -3,10 +3,11 @@ from pydantic import EmailStr
 from sqlmodel import Field, SQLModel
 from sqlalchemy import DateTime 
 
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
-
+def get_datetime_utc()-> datetime:
+    return datetime.now(timezone.utc)
 # JSON payload containing access token
 class Token(SQLModel):
     access_token: str

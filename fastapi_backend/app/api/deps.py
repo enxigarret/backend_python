@@ -21,7 +21,8 @@ reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login/access-token"
 )
 
-
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 def get_db() -> Generator[Session, None, None]:
     with Session(engine) as session:
@@ -32,6 +33,7 @@ SessionDep = Annotated[Session, Depends(get_db)]
 TokenDep = Annotated[str, Depends(reusable_oauth2)]
 
 def get_current_user(session:SessionDep,token:TokenDep) -> User:
+    logger.info("get_current_user called")
     try:
         payload = jwt.decode(
             token,
@@ -46,6 +48,7 @@ def get_current_user(session:SessionDep,token:TokenDep) -> User:
                 headers={"WWW-Authenticate": "Bearer"},
             )
     user = session.get(User, token_data.sub)
+    logger.info("Current user: %s", user)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -57,7 +60,7 @@ def get_current_user(session:SessionDep,token:TokenDep) -> User:
             detail="Inactive user"
         )
     return user
-logger = logging.getLogger(__name__)
+
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 def get_current_active_superuser(current_user: CurrentUser) -> User:

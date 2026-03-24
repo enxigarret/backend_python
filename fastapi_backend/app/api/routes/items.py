@@ -1,4 +1,5 @@
 
+import logging
 import uuid
 from typing import Any
 from fastapi import Depends, HTTPException, status,APIRouter
@@ -11,11 +12,12 @@ from datetime import datetime, timezone
 from fastapi import APIRouter
 
 
-router = APIRouter(prefix="/items", tags=["items"])
+router = APIRouter( tags=["items"])
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
-
-@router.get("/",response_model=ItemPublic)
+@router.get("/",response_model=ItemsPublic)
 def read_items(
     session: SessionDep, 
     current_user: CurrentUser,
@@ -33,7 +35,7 @@ def read_items(
             .offset(skip)
             .limit(limit)
         )
-        items = session.exec(statement).all()
+        items = session.exec(statement).scalars().all()
     else:
         count_statement= (
             select(func.count())
@@ -48,8 +50,9 @@ def read_items(
             .offset(skip)
             .limit(limit)
         )
-        items = session.exec(statement).all()
-    return ItemPublic(data=items,count=count[0])
+        items = session.exec(statement).scalars().all()
+    logger.info("Current count: %s", count)
+    return ItemsPublic(data=items,count=count[0])
 
 
 @router.get("/{item_id}", response_model=ItemPublic)

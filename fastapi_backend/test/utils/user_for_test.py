@@ -1,3 +1,5 @@
+import logging
+
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 from app import crud
@@ -11,9 +13,12 @@ def user_authentication_header(
     password: str
 ) -> dict[str, str]:
     data = {"username": email, "password": password}
-    response = client.post("/api/v1/login/access-token", data=data)
+    response = client.post( f"{settings.API_V1_STR}/auth/login/access-token", data=data)
     token = response.json().get("access_token")
     return {"Authorization": f"Bearer {token}"}
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 def authentication_token_from_email(
     *,
@@ -23,29 +28,32 @@ def authentication_token_from_email(
     db: Session
 )->dict[str, str]:
     user = crud.get_user_by_email(session=db, email=email)
+    logger.info("Hi User retrieved from database: %s", user)
     if not user:
         user_in = UserCreate(email=email,password=password)
         user = crud.create_user(session=db, user_create=user_in)
-    else:
-        user_in_update=UserUpdate(email=email,password=password)
-        if not user.id:
-            raise Exception("User id not set")
-        user = crud.update_user(session=db, db_user=user, user_update=user_in_update)
+        logger.info("Hi User created: %s", user)
+    # else:
+    #     user_in_update=UserUpdate(email=email,password=password)
+    #     if not user.id:
+    #         raise Exception("User id not set")
+    #     user = crud.update_user(session=db, db_user=user, user_update=user_in_update)
+    #     logger.info("Hi User updated: %s", user)
     return user_authentication_header(client=client, email=email, password=password)
 
-def authentication_token_from_email(
-        *,
-        client: TestClient, 
-        email: str, 
-        db:Session) -> dict[str, str]:
-    # send password recovery email to get the token
-    password = "testpassword123" 
-    user = crud.get_user_by_email(session=db, email=email)
-    if not user:
-        raise Exception(f"User with email {email} not found in the database")
-    else:
-        user_in_update = UserUpdate(password=password,email=email)
-        crud.update_user(session=db, db_user=user, user_update=user_in_update)
+# def authentication_token_from_email(
+#         *,
+#         client: TestClient, 
+#         email: str, 
+#         db:Session) -> dict[str, str]:
+#     # send password recovery email to get the token
+#     password = "adminpassword" 
+#     user = crud.get_user_by_email(session=db, email=email)
+#     if not user:
+#         raise Exception(f"User with email {email} not found in the database")
+#     else:
+#         user_in_update = UserUpdate(password=password,email=email)
+#         crud.update_user(session=db, db_user=user, user_update=user_in_update)
 
-    return user_authentication_header(client=client, email=email, password=password)
+#     return user_authentication_header(client=client, email=email, password=password)
    
